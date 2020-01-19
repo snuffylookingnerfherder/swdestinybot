@@ -2,5 +2,4 @@ django
 django-heroku
 gunicorn
 requests
-slack
 slackclient

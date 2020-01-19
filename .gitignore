@@ -2,3 +2,7 @@ db.sqlite3
 swdestinybot/migrations/
 __pycache__/
 
+pyvenv.cfg
+bin/
+lib/
+staticfiles/
