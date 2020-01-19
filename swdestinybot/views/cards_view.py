@@ -4,6 +4,11 @@ from swdestinybot.models import Card
 from django.views.decorators.csrf import csrf_exempt
 import requests
 import string
+from django.forms.models import model_to_dict
+# import Queue
+
+# messageQueue = Queue.Queue()
+MAX_CARDS = 25
 
 @csrf_exempt
 def handle_request(request):
@@ -14,12 +19,12 @@ def handle_request(request):
 
 def get_cards_from_model(name):
     if name != None:
-        return list(Card.objects.filter(search__icontains=normalize(name)).values())
+        return list(Card.objects.filter(search__icontains=normalize(name)).values())[:MAX_CARDS]
     else:
-        return list(Card.objects.all().values())
+        return list(Card.objects.all().values())[:MAX_CARDS]
 
 def get_card_by_id(id):
-    return Card.objects.get(pk=id)
+    return model_to_dict(Card.objects.get(pk=id))
 
 def sync_cards():
     print('Refreshing card cache')
@@ -36,6 +41,8 @@ def sync_cards():
             name=card['name'], 
             search=normalize(card['name']),
             image_url=card['imagesrc'],
+            set_name=card['set_code'],
+            set_number=card['position']
         )
     return HttpResponse('swdestinydb has been synced.')
 

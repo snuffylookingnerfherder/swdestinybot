@@ -10,54 +10,54 @@ import re
 from . import cards_view
 from urllib.parse import unquote
 
-client = slack.WebClient(settings.SLACK_TOKEN)
+clients = {}
 
 @csrf_exempt
 def handle_slack_message(request):
-    print(request.body)
-    challenge = json.loads(request.body)
-    print(challenge)
-    if challenge['type'] == "url_verification":
-        return JsonResponse({ "challenge" : challenge['challenge']})
-    elif challenge['type'] == "event_callback":
-        return send_message(challenge['event'])
+    payload = json.loads(request.body)
+    if payload['type'] == "url_verification":
+        return JsonResponse({ "challenge" : payload['challenge']})
+    elif payload['type'] == "event_callback":
+        return send_message(payload['event'])
 
 @csrf_exempt
 def handle_message_action(request):
-    #challenge = json.loads(request.body)
     if request.method == 'POST':
         action = json.loads(request.POST.get('payload'))
         if action['type'] == "block_actions":
             cardId = action['actions'][0]['value']
             matchedCard = cards_view.get_card_by_id(int(cardId))
             if matchedCard != None:
-                client.chat_postMessage(
+                getClient(action['team']['id']).chat_postMessage(
                     channel='#swdestiny',
                     text=matchedCard.name + '\n' + matchedCard.image_url + '\nFull details: https://swdestinydb.com/card/' + matchedCard.code,
-                    blocks=buildCardResponse(matchedCard))
+                    blocks=buildCardResponse(matchedCard),
+                    unfurl_links=False)
     return HttpResponse("Ok")
-
 
 def send_message(event):
     if 'username' not in event and event['type'] == 'message' and 'text' in event:
+        print(event)
         text = event['text']
         pattern = re.compile("\[\[(.*)\]\]")
         match = pattern.search(text)
         if match:
             card = match.group(1)
             matchedCards = cards_view.get_cards_from_model(card)
+
             if len(matchedCards) == 1:
-                client.chat_postMessage(
+                getClient(event['team']).chat_postMessage(
                     channel='#swdestiny',
                     text=matchedCards[0]['name'] + '\n' + matchedCards[0]['image_url'] + '\nFull details: https://swdestinydb.com/card/' + matchedCards[0]['code'],
-                    blocks=buildCardResponse(matchedCards[0]))
+                    blocks=buildCardResponse(matchedCards[0]),
+                    unfurl_links=False)
             elif len(matchedCards) > 1:
-                client.chat_postMessage(
+                getClient(event['team']).chat_postMessage(
                     channel='#swdestiny',
                     text='Multiple cards found for ' + card,
                     blocks=buildMultipleResponse(card, matchedCards))
             else:
-                client.chat_postMessage(
+                getClient(event['team']).chat_postMessage(
                     channel='#swdestiny',
                     text='No card found for ' + card)
     return HttpResponse("Ok")
@@ -68,20 +68,20 @@ def buildCardResponse(matchedCard):
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*" + getattr(matchedCard, 'name') + "*"
+				"text": "*" + matchedCard['name'] + " (" + matchedCard['set_name'] + "|" + str(matchedCard['set_number']) + ")" + "*"
 			}
         },
         {
             "type": "image",
             "block_id": "image1",
-            "image_url": getattr(matchedCard, 'image_url'),
-            "alt_text": getattr(matchedCard, 'name')
+            "image_url": matchedCard['image_url'],
+            "alt_text": matchedCard['name']
         },
         {
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "<https://swdestinydb.com/card/" + getattr(matchedCard, 'code') + "| See full card on swdestinydb.com>"
+				"text": "<https://swdestinydb.com/card/" + matchedCard['code'] + "| View on swdestinydb.com>"
 			}
         }
     ]
@@ -103,10 +103,17 @@ def buildMultipleResponse(cardName, matchedCards):
             "type": "button",
             "text": {
                 "type": "plain_text",
-                "text": card['name']
+                "text": card['name'] + " (" + card['set_name']  + "|" + str(card['set_number']) + ")"
             },
             "value": card['code'],
             "action_id": card['code']
         })
     blocks[1]['elements'] = elements
     return blocks
+
+def getClient(teamId):
+    if teamId not in clients:
+        token = settings.SLACK_TOKENS[teamId]
+        clients[teamId] = slack.WebClient(token)
+
+    return clients[teamId]

@@ -19,8 +19,6 @@ from swdestinybot.views import slack_view
 
 urlpatterns = [
     path('cards', cards_view.handle_request),
-    path('slack', slack_view.handle_slack_message),
-    path('slack/message_action', slack_view.handle_message_action)
+    path('slack/events', slack_view.handle_slack_message),
+    path('slack/message_actions', slack_view.handle_message_action),
 ]
-
-#cards_view.sync_cards()

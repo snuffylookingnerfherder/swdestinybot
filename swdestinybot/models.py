@@ -6,3 +6,5 @@ class Card(models.Model):
     name = models.CharField(max_length=200)
     search = models.CharField(max_length=200)
     image_url = models.CharField(max_length=200, null=True)
+    set_name = models.CharField(max_length=200)
+    set_number = models.IntegerField()

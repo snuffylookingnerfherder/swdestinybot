@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'e%5cuuzog6zw(vptg210vk8zrc1x^3d63o5r^o@q=%0$kpr*cp'
+SECRET_KEY = os.environ['SWDESTINY_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ['SWDESTINY_DEBUG'])
 
 ALLOWED_HOSTS = ['*']
 
@@ -124,4 +124,8 @@ CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_SECURE = False
 
-SLACK_TOKEN = os.environ['SWDESTINY_SLACK_TOKEN']
+SLACK_TOKENS = {}
+
+for token in os.environ['SWDESTINY_SLACK_TOKENS'].split(','):
+    appToken = token.split(':')
+    SLACK_TOKENS[appToken[0]] = appToken[1]
