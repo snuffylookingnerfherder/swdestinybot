@@ -22,4 +22,4 @@ urlpatterns = [
     path('slack', slack_view.handle_slack_message)
 ]
 
-cards_view.sync_cards()
+#cards_view.sync_cards()
