@@ -18,6 +18,16 @@ Configure the Slack API Oauth bot tokens by TEAM_ID:TOKEN,TEAM_ID:TOKEN... for y
 export SWDESTINY_SLACK_TOKENS='TG713JE7:xoxb-1971234231421342134-9595923459423492-Znp755KasdfasdfaR7TyispkU8'
 ```
 
+Configure the secret (use your own):
+```
+export SWDESTINY_SECRET=asdfasdf
+```
+
+Configure Debug Mode:
+```
+export SWDESTINY_DEBUG=True
+```
+
 Next to start the service run:
 ```
 python manage.py runserver 0:8000
