@@ -3,16 +3,25 @@ Star Wars Destiny Slack Bot for referencing card images
 
 # Running locally
 To set up run the following commands using python 3.8
-```python manage.py makemigrations swdestinybot```
-```python manage.py migrate```
+```
+python manage.py makemigrations swdestinybot
+```
+
+```
+python manage.py migrate
+```
 
 This sets up the in memory database and schema.
 
 Configure the Slack API Oauth bot token for your workspace as an environment variable:
-```export SWDESTINY_SLACK_TOKEN='xoxb-1971234231421342134-9595923459423492-Znp755KasdfasdfaR7TyispkU8'```
+```
+export SWDESTINY_SLACK_TOKEN='xoxb-1971234231421342134-9595923459423492-Znp755KasdfasdfaR7TyispkU8'
+```
 
 Next to start the service run:
-```python manage.py runserver 0:8000```
+```
+python manage.py runserver 0:8000
+```
 
 Test hitting the following URLs:
 http://localhost:8000/cards
