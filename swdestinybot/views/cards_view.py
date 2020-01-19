@@ -18,6 +18,9 @@ def get_cards_from_model(name):
     else:
         return list(Card.objects.all().values())
 
+def get_card_by_id(id):
+    return Card.objects.get(pk=id)
+
 def sync_cards():
     print('Refreshing card cache')
     resp = requests.get('https://swdestinydb.com/api/public/cards')

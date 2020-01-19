@@ -8,16 +8,35 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import re
 from . import cards_view
+from urllib.parse import unquote
 
 client = slack.WebClient(settings.SLACK_TOKEN)
 
 @csrf_exempt
 def handle_slack_message(request):
+    print(request.body)
     challenge = json.loads(request.body)
+    print(challenge)
     if challenge['type'] == "url_verification":
         return JsonResponse({ "challenge" : challenge['challenge']})
     elif challenge['type'] == "event_callback":
         return send_message(challenge['event'])
+
+@csrf_exempt
+def handle_message_action(request):
+    #challenge = json.loads(request.body)
+    if request.method == 'POST':
+        action = json.loads(request.POST.get('payload'))
+        if action['type'] == "block_actions":
+            cardId = action['actions'][0]['value']
+            matchedCard = cards_view.get_card_by_id(int(cardId))
+            if matchedCard != None:
+                client.chat_postMessage(
+                    channel='#swdestiny',
+                    text=matchedCard.name + '\n' + matchedCard.image_url + '\nFull details: https://swdestinydb.com/card/' + matchedCard.code,
+                    blocks=buildCardResponse(matchedCard))
+    return HttpResponse("Ok")
+
 
 def send_message(event):
     if 'username' not in event and event['type'] == 'message' and 'text' in event:
@@ -30,13 +49,64 @@ def send_message(event):
             if len(matchedCards) == 1:
                 client.chat_postMessage(
                     channel='#swdestiny',
-                    text=matchedCards[0]['name'] + '\n' + matchedCards[0]['image_url'] + '\nFull details: https://swdestinydb.com/card/' + matchedCards[0]['code'])
+                    text=matchedCards[0]['name'] + '\n' + matchedCards[0]['image_url'] + '\nFull details: https://swdestinydb.com/card/' + matchedCards[0]['code'],
+                    blocks=buildCardResponse(matchedCards[0]))
             elif len(matchedCards) > 1:
                 client.chat_postMessage(
                     channel='#swdestiny',
-                    text='Multiple matches found for ' + card)
+                    text='Multiple cards found for ' + card,
+                    blocks=buildMultipleResponse(card, matchedCards))
             else:
                 client.chat_postMessage(
                     channel='#swdestiny',
-                    text='No match found for ' + card)
+                    text='No card found for ' + card)
     return HttpResponse("Ok")
+
+def buildCardResponse(matchedCard):
+    return [
+        {
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*" + getattr(matchedCard, 'name') + "*"
+			}
+        },
+        {
+            "type": "image",
+            "block_id": "image1",
+            "image_url": getattr(matchedCard, 'image_url'),
+            "alt_text": getattr(matchedCard, 'name')
+        },
+        {
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "<https://swdestinydb.com/card/" + getattr(matchedCard, 'code') + "| See full card on swdestinydb.com>"
+			}
+        }
+    ]
+
+def buildMultipleResponse(cardName, matchedCards):
+    blocks = [
+        {
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Multiple cards found for *" + cardName + "*"
+			}
+        },
+        {"type": "actions"}
+    ]
+    elements = []
+    for card in matchedCards:
+        elements.append({
+            "type": "button",
+            "text": {
+                "type": "plain_text",
+                "text": card['name']
+            },
+            "value": card['code'],
+            "action_id": card['code']
+        })
+    blocks[1]['elements'] = elements
+    return blocks
