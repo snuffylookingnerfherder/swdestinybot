@@ -29,14 +29,14 @@ def send_message(event):
             matchedCards = cards_view.get_cards_from_model(card)
             if len(matchedCards) == 1:
                 client.chat_postMessage(
-                    channel='#bot_test',
+                    channel='#swdestiny',
                     text=matchedCards[0]['name'] + '\n' + matchedCards[0]['image_url'] + '\nFull details: https://swdestinydb.com/card/' + matchedCards[0]['code'])
             elif len(matchedCards) > 1:
                 client.chat_postMessage(
-                    channel='#bot_test',
+                    channel='#swdestiny',
                     text='Multiple matches found for ' + card)
             else:
                 client.chat_postMessage(
-                    channel='#bot_test',
+                    channel='#swdestiny',
                     text='No match found for ' + card)
     return HttpResponse("Ok")
