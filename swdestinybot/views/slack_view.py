@@ -30,14 +30,13 @@ def handle_message_action(request):
             if matchedCard != None:
                 getClient(action['team']['id']).chat_postMessage(
                     channel='#swdestiny',
-                    text=matchedCard.name + '\n' + matchedCard.image_url + '\nFull details: https://swdestinydb.com/card/' + matchedCard.code,
+                    text=matchedCard['name'] + '\n' + matchedCard['image_url'] + '\nFull details: https://swdestinydb.com/card/' + matchedCard['code'],
                     blocks=buildCardResponse(matchedCard),
                     unfurl_links=False)
     return HttpResponse("Ok")
 
 def send_message(event):
     if 'username' not in event and event['type'] == 'message' and 'text' in event:
-        print(event)
         text = event['text']
         pattern = re.compile("\[\[(.*)\]\]")
         match = pattern.search(text)
