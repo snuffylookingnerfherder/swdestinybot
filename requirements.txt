@@ -1,3 +1,4 @@
+discord
 django
 django-heroku
 gunicorn

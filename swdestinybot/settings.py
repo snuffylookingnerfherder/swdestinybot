@@ -124,8 +124,12 @@ CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_SECURE = False
 
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
+DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
+
 SLACK_TOKENS = {}
 
 for token in os.environ['SWDESTINY_SLACK_TOKENS'].split(','):
-    appToken = token.split(':')
-    SLACK_TOKENS[appToken[0]] = appToken[1]
+    teamToken = token.split(':')
+    SLACK_TOKENS[teamToken[0]] = teamToken[1]
