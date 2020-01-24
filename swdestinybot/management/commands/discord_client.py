@@ -25,7 +25,7 @@ class DiscordClient(discord.Client):
             except ValueError:
                 matchedCards = card_service.get_cards_by_name(card)
             if len(matchedCards) == 1:
-                await message.channel.send(matchedCards[0]['name'] + '\n' + matchedCards[0]['image_url'] + " (" + card['set_name']  + "|" + str(card['set_number']) + ")" + '\nView on swdestinydb.com: https://swdestinydb.com/card/' + matchedCards[0]['code'])
+                await message.channel.send(matchedCards[0]['name'] + '\n' + matchedCards[0]['image_url'] + " (" + matchedCards[0]['set_name']  + "|" + str(matchedCards[0]['set_number']) + ")" + '\nView on swdestinydb.com: https://swdestinydb.com/card/' + matchedCards[0]['code'])
             elif len(matchedCards) > 1:
                 output = 'Multiple cards found for ' + card
                 for card in matchedCards:
