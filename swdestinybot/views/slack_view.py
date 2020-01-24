@@ -7,7 +7,7 @@ from swdestinybot.models import Card
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import re
-from . import cards_view
+from ..services import card_service
 from urllib.parse import unquote
 
 clients = {}
@@ -26,7 +26,7 @@ def handle_message_action(request):
         action = json.loads(request.POST.get('payload'))
         if action['type'] == "block_actions":
             cardId = action['actions'][0]['value']
-            matchedCard = cards_view.get_card_by_id(int(cardId))
+            matchedCard = card_service.get_card_by_id(int(cardId))
             if matchedCard != None:
                 getClient(action['team']['id']).chat_postMessage(
                     channel='#swdestiny',
@@ -42,7 +42,7 @@ def send_message(event):
         match = pattern.search(text)
         if match:
             card = match.group(1)
-            matchedCards = cards_view.get_cards_from_model(card)
+            matchedCards = card_service.get_cards_by_name(card)
 
             if len(matchedCards) == 1:
                 getClient(event['team']).chat_postMessage(

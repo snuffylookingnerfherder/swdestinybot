@@ -16,7 +16,6 @@ Including another URLconf
 from django.urls import path
 from swdestinybot.views import cards_view
 from swdestinybot.views import slack_view
-from swdestinybot.discord_client import DiscordClient
 from django.conf import settings
 
 urlpatterns = [
@@ -24,7 +23,3 @@ urlpatterns = [
     path('slack/events', slack_view.handle_slack_message),
     path('slack/message_actions', slack_view.handle_message_action),
 ]
-
-token = settings.DISCORD_TOKEN
-client = DiscordClient()
-client.run(token)

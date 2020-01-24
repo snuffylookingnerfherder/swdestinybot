@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'background_task',
     'swdestinybot'
 ]
 
@@ -124,7 +125,7 @@ CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_SECURE = False
 
-os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "True"
 
 DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
 
