@@ -1,5 +1,25 @@
 # swdestinybot
-Star Wars Destiny Slack Bot for referencing card images
+Star Wars Destiny Slack/Discord Bot for referencing card images
+
+# Preview
+
+## Slack
+
+### Single Card Match
+[single card match](slack-single.png)
+
+### Multiple Card Match
+[multiple card match](slack-multi.png)
+
+
+## Discord
+
+### Single Card Match
+[single card match](discord-single.png)
+
+### Multiple Card Match
+[multiple card match](discord-multi.png)
+
 
 # Running locally
 To set up run the following commands using python 3.8
@@ -35,3 +55,15 @@ python manage.py runserver 0:8000
 
 Test hitting the following URLs:
 http://localhost:8000/cards
+
+# Discord
+For discord, set variable:
+```
+export DISCORD_TOKEN=asdf
+```
+
+To run locally:
+```
+python manage.py discord_client
+```
+
