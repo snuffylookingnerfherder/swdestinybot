@@ -1,1 +1,1 @@
-web: gunicorn swdestinybot.wsgi --log-file -
+web: python manage.py discord_client 
