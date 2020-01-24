@@ -6,19 +6,19 @@ Star Wars Destiny Slack/Discord Bot for referencing card images
 ## Slack
 
 ### Single Card Match
-[single card match](slack-single.png)
+![single card match](slack-single.png)
 
 ### Multiple Card Match
-[multiple card match](slack-multi.png)
+![multiple card match](slack-multi.png)
 
 
 ## Discord
 
 ### Single Card Match
-[single card match](discord-single.png)
+![single card match](discord-single.png)
 
 ### Multiple Card Match
-[multiple card match](discord-multi.png)
+![multiple card match](discord-multi.png)
 
 
 # Running locally
